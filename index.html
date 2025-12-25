@@ -34,21 +34,23 @@
 
   .container {
     text-align: center;
-    background: rgba(0,0,0,0.4);
+    background: rgba(0,0,0,0.5);
     padding: 30px;
     border-radius: 15px;
     width: 90%;
     max-width: 420px;
+    z-index: 10;
   }
 
   .form-row { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px; width: 100%; }
   label { margin-bottom: 5px; font-weight: bold; font-size: 16px; text-align: left; }
-  input, select, button { padding: 12px; font-size: 16px; width: 100%; border-radius: 10px; border: none; box-sizing: border-box; }
-  select { color: #000; background: #f2f2f2; }
+  input, button { padding: 12px; font-size: 16px; width: 100%; border-radius: 10px; border: none; box-sizing: border-box; }
   button { cursor: pointer; font-weight: bold; margin-top: 12px; }
 
+  #setupScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
   #setupScreen button { background: #ff3b3b; color: #fff; }
-  #hiddenScreen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a1a3f; color: white; font-size: 30px; align-items: center; justify-content: center; flex-direction: column; padding: 20px; }
+
+  #hiddenScreen { display: none; flex-direction: column; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a1a3f; color: white; font-size: 30px; padding: 20px; z-index: 5; }
 
   #starCover { font-size: 36px; margin-bottom: 20px; text-align:center; }
   #roleDisplay { display:none; margin-top:20px; font-size: 24px; text-align:center; }
@@ -72,7 +74,7 @@
 </div>
 
 <!-- Gameplay Screen -->
-<div id="hiddenScreen" style="display:flex; flex-direction:column; align-items:center;">
+<div id="hiddenScreen">
   <div id="starCover">⭐⭐⭐ Tap to Reveal Role ⭐⭐⭐</div>
   <button id="revealButton" onclick="revealRole()">Reveal</button>
   <div id="roleDisplay"></div>
@@ -81,7 +83,7 @@
 </div>
 
 <script>
-// Full 50+ prompts
+// Full prompts
 const prompts = [
   "The funniest thing that has happened to you while celebrating Christmas abroad",
   "A time you misunderstood a local Christmas tradition",
@@ -150,20 +152,22 @@ let currentPlayer = 1;
 let roles = [];
 let currentPrompt = "";
 
-// Start Game
+// Start game
 function startGame() {
   const playerInput = document.getElementById('playerCount').value;
   totalPlayers = parseInt(playerInput);
 
   if (!totalPlayers || totalPlayers < 3 || totalPlayers > 20) {
-    return alert("Please enter a valid number of players between 3 and 20.");
+    alert("Please enter a number of players between 3 and 20.");
+    return;
   }
 
-  // Assign roles dynamically
+  // Assign roles randomly
   roles = Array(totalPlayers).fill("Santa");
   const satanIndex = Math.floor(Math.random() * totalPlayers);
   roles[satanIndex] = "Satan";
 
+  // Show hidden screen, hide setup
   document.getElementById('setupScreen').style.display = 'none';
   document.getElementById('hiddenScreen').style.display = 'flex';
   resetHidden();
@@ -178,7 +182,7 @@ function resetHidden() {
   document.getElementById('revealButton').style.display = 'block';
 }
 
-// Reveal role + prompt
+// Reveal role
 function revealRole() {
   currentPrompt = prompts[Math.floor(Math.random() * prompts.length)];
   const roleDisplay = document.getElementById('roleDisplay');
@@ -199,13 +203,13 @@ function revealRole() {
   }
 }
 
-// Next Player
+// Next player
 function nextPlayer() {
   currentPlayer++;
   resetHidden();
 }
 
-// Restart Game
+// Restart game
 function restartGame() {
   location.reload();
 }
