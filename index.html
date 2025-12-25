@@ -51,7 +51,7 @@
   #hiddenScreen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a1a3f; color: white; font-size: 30px; align-items: center; justify-content: center; flex-direction: column; padding: 20px; }
 
   #starCover { font-size: 36px; margin-bottom: 20px; }
-  #roleDisplay { display:none; margin-top:20px; font-size: 24px; }
+  #roleDisplay { display:none; margin-top:20px; font-size: 24px; text-align:center; }
   #revealButton, #nextPlayerBtn, #restartBtn { margin-top: 20px; padding: 12px; border-radius: 10px; border: none; font-size: 18px; }
   #revealButton { background: #4caf50; color: white; }
   #nextPlayerBtn { background: #2196f3; color: white; }
@@ -61,6 +61,7 @@
 <body>
 <div id="snowContainer"></div>
 
+<!-- First Page: Setup -->
 <div class="container" id="setupScreen">
   <h2>🎄 Santa & Satan 🎄</h2>
   <div class="form-row">
@@ -70,6 +71,7 @@
   <button onclick="startGame()">Start Game</button>
 </div>
 
+<!-- Gameplay Screen -->
 <div id="hiddenScreen" style="display:flex; flex-direction:column; align-items:center;">
   <div id="starCover">⭐⭐⭐ Tap to Reveal Role ⭐⭐⭐</div>
   <button id="revealButton" onclick="revealRole()">Reveal</button>
@@ -79,22 +81,68 @@
 </div>
 
 <script>
+// Full 50+ prompts
 const prompts = [
-  "The funniest thing that happened to you while celebrating Christmas abroad",
+  "The funniest thing that has happened to you while celebrating Christmas abroad",
   "A time you misunderstood a local Christmas tradition",
   "The weirdest Christmas food you’ve tried this year",
   "A gift you bought or received that totally backfired",
   "Your most awkward moment in a German Christmas market",
+  "A Christmas decoration fail that made you laugh",
+  "The weirdest thing you’ve seen someone do at a holiday event",
+  "A gift you pretended to like but secretly hated",
+  "An accidental Christmas mishap that could be a meme",
+  "The silliest thing you did to feel festive this year",
+  "The most student-budget-friendly Christmas celebration you’ve had",
+  "A Christmas DIY or decoration fail",
+  "A language mix-up that happened while buying Christmas food or gifts",
+  "A small win you had this year that made your holiday feel special",
+  "Something you did for Christmas that your friends back home would find hilarious",
   "The first Christmas snow moment that surprised you",
   "Your favorite cheap Christmas treat you discovered here",
+  "A holiday shopping fail you experienced this year",
   "A cultural difference that made your Christmas unique",
-  "The nicest thing someone did for you this Christmas abroad",
-  "Your funniest moment sharing Christmas with roommates or classmates",
+  "The first time you tried a German holiday drink or snack",
   "If Santa/Satan came to our city, what would they do first?",
-  "A magical Christmas item you wish existed this year",
-  "Invent a new Christmas tradition for students abroad",
+  "The weirdest Christmas outfit you could wear and get away with",
   "Your dream Christmas snack mashup",
-  "A small win you had this year that made your holiday feel special"
+  "A prank you would play during a Christmas dinner",
+  "If your pet or imaginary friend could celebrate Christmas, what would they do?",
+  "If Christmas trees could talk, what would they say?",
+  "Invent a new Christmas tradition for students abroad",
+  "If you could decorate your dorm room like a Christmas wonderland, how would it look?",
+  "Imagine a Christmas gift that everyone would fight over — what is it?",
+  "A magical Christmas item you wish existed this year",
+  "Your favorite little thing about celebrating Christmas in a new country",
+  "The first Christmas memory that comes to mind from your childhood",
+  "A Christmas song, movie, or anime you can’t get out of your head",
+  "The nicest thing someone did for you this Christmas abroad",
+  "A small cultural difference that surprised you this Christmas",
+  "Your funniest moment sharing Christmas with roommates or classmates",
+  "A gift you gave that made someone unexpectedly happy",
+  "Something you learned about yourself this holiday season",
+  "The best way to stay cozy during a cold German winter",
+  "A moment this Christmas that made you feel at home even far away",
+  "A Christmas tree design so wild it shouldn’t exist",
+  "The strangest Christmas-themed game you can imagine",
+  "A snowman with a very unusual personality",
+  "A Christmas market stall that sells something crazy",
+  "Your most bizarre Christmas costume idea",
+  "If elves took over your dorm for a day, what would happen?",
+  "Your dream Christmas prank on a friend",
+  "The weirdest Christmas gift exchange idea",
+  "A Christmas movie plot you would rewrite",
+  "A magical creature visiting your Christmas celebration",
+  "A Christmas dinner with characters from different countries – who is there?",
+  "A mishap while wrapping a gift that got out of hand",
+  "The funniest thing a friend did during Christmas shopping",
+  "A time you tried to cook a Christmas dish and it went terribly",
+  "A hidden talent you could show at a Christmas party",
+  "A unique Christmas tradition your family or culture has",
+  "A Christmas-themed dare you would do for fun",
+  "Your ideal cozy Christmas evening in a foreign country",
+  "A weird Christmas superstition you’d make up",
+  "A Christmas moment that made you unexpectedly emotional"
 ];
 
 let totalPlayers = 0;
@@ -102,21 +150,22 @@ let currentPlayer = 1;
 let roles = [];
 let currentPrompt = "";
 
+// Start Game
 function startGame() {
   totalPlayers = parseInt(document.getElementById('playerCount').value);
   if (!totalPlayers || totalPlayers < 3 || totalPlayers > 10) return alert("Players must be between 3 and 10!");
 
+  // Assign roles
   roles = Array(totalPlayers).fill("Santa");
   const satanIndex = Math.floor(Math.random() * totalPlayers);
   roles[satanIndex] = "Satan";
-
-  currentPrompt = prompts[Math.floor(Math.random() * prompts.length)];
 
   document.getElementById('setupScreen').style.display = 'none';
   document.getElementById('hiddenScreen').style.display = 'flex';
   resetHidden();
 }
 
+// Reset hidden screen
 function resetHidden() {
   document.getElementById('roleDisplay').style.display = 'none';
   document.getElementById('nextPlayerBtn').style.display = 'none';
@@ -125,7 +174,9 @@ function resetHidden() {
   document.getElementById('revealButton').style.display = 'block';
 }
 
+// Reveal role + prompt
 function revealRole() {
+  currentPrompt = prompts[Math.floor(Math.random() * prompts.length)];
   const roleDisplay = document.getElementById('roleDisplay');
   roleDisplay.style.display = 'block';
   document.getElementById('starCover').style.display = 'none';
@@ -144,11 +195,13 @@ function revealRole() {
   }
 }
 
+// Next Player
 function nextPlayer() {
   currentPlayer++;
   resetHidden();
 }
 
+// Restart Game
 function restartGame() {
   location.reload();
 }
