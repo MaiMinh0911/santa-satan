@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Santa & Satan Story Game</title>
 <style>
   body {
@@ -66,7 +66,7 @@
   <h2>🎄 Santa & Satan 🎄</h2>
   <div class="form-row">
     <label for="playerCount">Number of players:</label>
-    <input type="number" id="playerCount" min="3" max="10" value="3" />
+    <input type="number" id="playerCount" min="3" max="20" placeholder="Enter number of players">
   </div>
   <button onclick="startGame()">Start Game</button>
 </div>
@@ -152,12 +152,14 @@ let currentPrompt = "";
 
 // Start Game
 function startGame() {
-  totalPlayers = parseInt(document.getElementById('playerCount').value);
-  if (!totalPlayers || totalPlayers < 3 || totalPlayers > 10) {
-    return alert("Players must be between 3 and 10!");
+  const playerInput = document.getElementById('playerCount').value;
+  totalPlayers = parseInt(playerInput);
+
+  if (!totalPlayers || totalPlayers < 3 || totalPlayers > 20) {
+    return alert("Please enter a valid number of players between 3 and 20.");
   }
 
-  // Assign roles
+  // Assign roles dynamically
   roles = Array(totalPlayers).fill("Santa");
   const satanIndex = Math.floor(Math.random() * totalPlayers);
   roles[satanIndex] = "Satan";
