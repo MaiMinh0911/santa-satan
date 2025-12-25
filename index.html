@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Santa & Satan - Christmas Story Game</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(to bottom, #2c3e50, #3498db);
+    color: #fff;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .container {
+    background: rgba(255,255,255,0.05);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    max-width: 600px;
+    width: 90%;
+  }
+
+  h1 {
+    font-size: 2em;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px #000;
+  }
+
+  button {
+    padding: 12px 25px;
+    margin: 10px;
+    font-size: 1em;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+    background: #e74c3c;
+    color: #fff;
+    font-weight: bold;
+  }
+
+  button:hover {
+    background: #c0392b;
+    transform: scale(1.05);
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .prompt {
+    margin: 20px 0;
+    font-size: 1.2em;
+    line-height: 1.5em;
+  }
+
+  .role-display {
+    font-size: 1.4em;
+    margin: 15px 0;
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.1);
+  }
+
+  .vote-btn {
+    background: #27ae60;
+  }
+
+  .vote-btn:hover {
+    background: #1e8449;
+  }
+
+  .reveal {
+    font-size: 1.5em;
+    margin-top: 20px;
+    text-shadow: 2px 2px 4px #000;
+  }
+
+  /* Snow animation */
+  .snowflake {
+    position: fixed;
+    top: -10px;
+    color: #fff;
+    font-size: 1em;
+    user-select: none;
+    pointer-events: none;
+    z-index: 9999;
+    animation-name: fall;
+    animation-duration: 10s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes fall {
+    0% { transform: translateY(-10px); }
+    100% { transform: translateY(110vh); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container" id="startScreen">
+  <h1>🎄 Santa & Satan Story Game 🎄</h1>
+  <p>3 players, one laptop. Take turns telling stories!</p>
+  <button onclick="startGame()">Start Game</button>
+</div>
+
+<div class="container hidden" id="roleScreen">
+  <h1>Your Role</h1>
+  <div class="role-display" id="roleDisplay"></div>
+  <button onclick="nextPrompt()">Next</button>
+</div>
+
+<div class="container hidden" id="promptScreen">
+  <h1>Story Prompt</h1>
+  <div class="prompt" id="promptDisplay"></div>
+  <button onclick="startVoting()">Finished Storytelling</button>
+</div>
+
+<div class="container hidden" id="voteScreen">
+  <h1>Vote: Who is Satan?</h1>
+  <button class="vote-btn" onclick="castVote(0)">Player 1</button>
+  <button class="vote-btn" onclick="castVote(1)">Player 2</button>
+  <button class="vote-btn" onclick="castVote(2)">Player 3</button>
+</div>
+
+<div class="container hidden" id="revealScreen">
+  <h1>Results!</h1>
+  <div class="reveal" id="revealText"></div>
+  <button onclick="nextRound()">Next Round</button>
+</div>
+
+<script>
+const players = [null, null, null];
+let currentPrompt = "";
+let votes = [0,0,0];
+let roles = [];
+let prompts = [
+  // Funny / Embarrassing
+  "The funniest thing that has happened to you while celebrating Christmas abroad",
+  "A time you misunderstood a local Christmas tradition",
+  "The weirdest Christmas food you’ve tried this year",
+  "A gift you bought or received that totally backfired",
+  "Your most awkward moment in a German Christmas market",
+  "A Christmas decoration fail that made you laugh",
+  "The weirdest thing you’ve seen someone do at a holiday event",
+  "A gift you pretended to like but secretly hated",
+  "An accidental Christmas mishap that could be a meme",
+  "The silliest thing you did to feel festive this year",
+  // Student Life Abroad
+  "The most student-budget-friendly Christmas celebration you’ve had",
+  "A Christmas DIY or decoration fail",
+  "A language mix-up that happened while buying Christmas food or gifts",
+  "A small win you had this year that made your holiday feel special",
+  "Something you did for Christmas that your friends back home would find hilarious",
+  "The first Christmas snow moment that surprised you",
+  "Your favorite cheap Christmas treat you discovered here",
+  "A holiday shopping fail you experienced this year",
+  "A cultural difference that made your Christmas unique",
+  "The first time you tried a German holiday drink or snack",
+  // Imaginative / Fun
+  "If Santa/Satan came to our city, what would they do first?",
+  "The weirdest Christmas outfit you could wear and get away with",
+  "Your dream Christmas snack mashup",
+  "A prank you would play during a Christmas dinner",
+  "If your pet or imaginary friend could celebrate Christmas, what would they do?",
+  "If Christmas trees could talk, what would they say?",
+  "Invent a new Christmas tradition for students abroad",
+  "If you could decorate your dorm room like a Christmas wonderland, how would it look?",
+  "Imagine a Christmas gift that everyone would fight over — what is it?",
+  "A magical Christmas item you wish existed this year",
+  // Social / Getting to Know Each Other
+  "Your favorite little thing about celebrating Christmas in a new country",
+  "The first Christmas memory that comes to mind from your childhood",
+  "A Christmas song, movie, or anime you can’t get out of your head",
+  "The nicest thing someone did for you this Christmas abroad",
+  "A small cultural difference that surprised you this Christmas",
+  "Your funniest moment sharing Christmas with roommates or classmates",
+  "A gift you gave that made someone unexpectedly happy",
+  "Something you learned about yourself this holiday season",
+  "The best way to stay cozy during a cold German winter",
+  "A moment this Christmas that made you feel at home even far away"
+];
+
+function startGame() {
+  // Assign roles randomly: 2 Santa, 1 Satan
+  roles = ["Santa", "Santa", "Satan"];
+  roles.sort(() => Math.random() - 0.5); // shuffle
+  document.getElementById('startScreen').classList.add('hidden');
+  showRole(0);
+}
+
+let currentPlayer = 0;
+function showRole(playerIndex) {
+  currentPlayer = playerIndex;
+  document.getElementById('roleDisplay').innerText = roles[playerIndex];
+  document.getElementById('roleScreen').classList.remove('hidden');
+}
+
+function nextPrompt() {
+  document.getElementById('roleScreen').classList.add('hidden');
+  currentPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+  document.getElementById('promptDisplay').innerText = currentPrompt;
+  document.getElementById('promptScreen').classList.remove('hidden');
+}
+
+function startVoting() {
+  document.getElementById('promptScreen').classList.add('hidden');
+  document.getElementById('voteScreen').classList.remove('hidden');
+}
+
+function castVote(player) {
+  votes[player]++;
+  showResults();
+}
+
+function showResults() {
+  document.getElementById('voteScreen').classList.add('hidden');
+  const satanIndex = roles.indexOf("Satan");
+  let text = `The Satan was Player ${satanIndex + 1}! 🎅👹\n\nVotes:\n`;
+  votes.forEach((v,i) => {
+    text += `Player ${i + 1}: ${v} vote(s)\n`;
+  });
+  document.getElementById('revealText').innerText = text;
+  document.getElementById('revealScreen').classList.remove('hidden');
+}
+
+function nextRound() {
+  votes = [0,0,0];
+  // Shuffle roles for next round
+  roles.sort(() => Math.random() - 0.5);
+  showRole(0);
+}
+
+// Snow animation
+function createSnowflake() {
+  const snowflake = document.createElement('div');
+  snowflake.classList.add('snowflake');
+  snowflake.style.left = Math.random() * window.innerWidth + 'px';
+  snowflake.style.fontSize = (10 + Math.random() * 20) + 'px';
+  snowflake.style.opacity = Math.random();
+  snowflake.style.animationDuration = (5 + Math.random() * 5) + 's';
+  snowflake.innerText = '❄';
+  document.body.appendChild(snowflake);
+  setTimeout(() => { snowflake.remove(); }, 10000);
+}
+
+setInterval(createSnowflake, 300);
+</script>
+
+</body>
+</html>
