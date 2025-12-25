@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Santa & Satan Story Game</title>
 <style>
   body {
     margin: 0;
-    font-family: 'Montserrat', sans-serif;
+    font-family: Arial, sans-serif;
     color: #fff;
     height: 100vh;
     display: flex;
@@ -18,56 +18,6 @@
     overflow: hidden;
   }
 
-  .container {
-    text-align: center;
-    background: rgba(0,0,0,0.4);
-    padding: 30px;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 500px;
-  }
-
-  h2 {
-    margin-bottom: 20px;
-  }
-
-  input, select, button {
-    padding: 12px;
-    font-size: 16px;
-    width: 100%;
-    border-radius: 10px;
-    border: none;
-    margin-top: 10px;
-    box-sizing: border-box;
-    cursor: pointer;
-  }
-
-  #setupScreen button { background: #ff3b3b; color: #fff; font-weight: bold; }
-
-  #hiddenScreen {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #0a1a3f;
-    color: white;
-    font-size: 30px;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    padding: 20px;
-  }
-
-  #starCover { font-size: 36px; margin-bottom: 20px; }
-  #roleDisplay { margin-top: 20px; font-size: 24px; }
-  #revealButton, #nextPlayerBtn, #restartBtn { margin-top: 20px; padding: 12px; border-radius: 10px; border: none; font-size: 18px; }
-  #revealButton { background: #4caf50; color: white; }
-  #nextPlayerBtn { background: #2196f3; color: white; }
-  #restartBtn { background: #ff9800; color: white; }
-
-  /* Snow */
   .snowflake {
     position: fixed;
     top: -10px;
@@ -75,21 +25,47 @@
     font-size: 1em;
     user-select: none;
     animation: fall linear infinite;
-    z-index: 9999;
   }
 
   @keyframes fall {
     0% { transform: translateY(-10vh) translateX(0); opacity: 1; }
     100% { transform: translateY(110vh) translateX(var(--deltaX)); opacity: 0; }
   }
+
+  .container {
+    text-align: center;
+    background: rgba(0,0,0,0.4);
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 420px;
+  }
+
+  .form-row { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px; width: 100%; }
+  label { margin-bottom: 5px; font-weight: bold; font-size: 16px; text-align: left; }
+  input, select, button { padding: 12px; font-size: 16px; width: 100%; border-radius: 10px; border: none; box-sizing: border-box; }
+  select { color: #000; background: #f2f2f2; }
+  button { cursor: pointer; font-weight: bold; margin-top: 12px; }
+
+  #setupScreen button { background: #ff3b3b; color: #fff; }
+  #hiddenScreen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a1a3f; color: white; font-size: 30px; align-items: center; justify-content: center; flex-direction: column; padding: 20px; }
+
+  #starCover { font-size: 36px; margin-bottom: 20px; }
+  #roleDisplay { display:none; margin-top:20px; font-size: 24px; }
+  #revealButton, #nextPlayerBtn, #restartBtn { margin-top: 20px; padding: 12px; border-radius: 10px; border: none; font-size: 18px; }
+  #revealButton { background: #4caf50; color: white; }
+  #nextPlayerBtn { background: #2196f3; color: white; }
+  #restartBtn { background: #ff9800; color: white; }
 </style>
 </head>
 <body>
-<div id="setupScreen" class="container">
-  <h2>🎄 Santa & Satan Story Game 🎄</h2>
-  <div>
+<div id="snowContainer"></div>
+
+<div class="container" id="setupScreen">
+  <h2>🎄 Santa & Satan 🎄</h2>
+  <div class="form-row">
     <label for="playerCount">Number of players:</label>
-    <input type="number" id="playerCount" min="3" max="10" value="3">
+    <input type="number" id="playerCount" min="3" max="10" value="3" />
   </div>
   <button onclick="startGame()">Start Game</button>
 </div>
@@ -97,9 +73,9 @@
 <div id="hiddenScreen" style="display:flex; flex-direction:column; align-items:center;">
   <div id="starCover">⭐⭐⭐ Tap to Reveal Role ⭐⭐⭐</div>
   <button id="revealButton" onclick="revealRole()">Reveal</button>
-  <div id="roleDisplay" style="display:none;"></div>
-  <button id="nextPlayerBtn" style="display:none;" onclick="nextPlayer()">Next Player</button>
-  <button id="restartBtn" style="display:none;" onclick="restartGame()">Restart Game</button>
+  <div id="roleDisplay"></div>
+  <button id="nextPlayerBtn" onclick="nextPlayer()">Next Player</button>
+  <button id="restartBtn" onclick="restartGame()">Restart Game</button>
 </div>
 
 <script>
@@ -128,16 +104,12 @@ let currentPrompt = "";
 
 function startGame() {
   totalPlayers = parseInt(document.getElementById('playerCount').value);
-  if (!totalPlayers || totalPlayers < 3 || totalPlayers > 10) {
-    return alert("Players must be between 3 and 10!");
-  }
+  if (!totalPlayers || totalPlayers < 3 || totalPlayers > 10) return alert("Players must be between 3 and 10!");
 
-  // Assign roles dynamically
   roles = Array(totalPlayers).fill("Santa");
   const satanIndex = Math.floor(Math.random() * totalPlayers);
   roles[satanIndex] = "Satan";
 
-  // Pick random prompt
   currentPrompt = prompts[Math.floor(Math.random() * prompts.length)];
 
   document.getElementById('setupScreen').style.display = 'none';
@@ -160,7 +132,7 @@ function revealRole() {
   document.getElementById('revealButton').style.display = 'none';
 
   if (roles[currentPlayer-1] === "Satan") {
-    roleDisplay.innerHTML = `👹 You are SATAN!<br><br>Try to lie about the prompt:<br><strong>${currentPrompt}</strong>`;
+    roleDisplay.innerHTML = `👹 You are SATAN!<br><br>Lie about the prompt:<br><strong>${currentPrompt}</strong>`;
   } else {
     roleDisplay.innerHTML = `🎅 You are SANTA!<br><br>Tell a story about:<br><strong>${currentPrompt}</strong>`;
   }
@@ -195,7 +167,6 @@ function createSnowflake() {
   document.body.appendChild(snow);
   setTimeout(() => snow.remove(), parseFloat(duration)*1000);
 }
-
 setInterval(createSnowflake, 200);
 </script>
 </body>
