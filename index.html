@@ -50,7 +50,7 @@
   #setupScreen button { background: #ff3b3b; color: #fff; }
   #hiddenScreen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a1a3f; color: white; font-size: 30px; align-items: center; justify-content: center; flex-direction: column; padding: 20px; }
 
-  #starCover { font-size: 36px; margin-bottom: 20px; }
+  #starCover { font-size: 36px; margin-bottom: 20px; text-align:center; }
   #roleDisplay { display:none; margin-top:20px; font-size: 24px; text-align:center; }
   #revealButton, #nextPlayerBtn, #restartBtn { margin-top: 20px; padding: 12px; border-radius: 10px; border: none; font-size: 18px; }
   #revealButton { background: #4caf50; color: white; }
@@ -61,7 +61,7 @@
 <body>
 <div id="snowContainer"></div>
 
-<!-- First Page: Setup -->
+<!-- Setup Screen -->
 <div class="container" id="setupScreen">
   <h2>🎄 Santa & Satan 🎄</h2>
   <div class="form-row">
@@ -153,7 +153,9 @@ let currentPrompt = "";
 // Start Game
 function startGame() {
   totalPlayers = parseInt(document.getElementById('playerCount').value);
-  if (!totalPlayers || totalPlayers < 3 || totalPlayers > 10) return alert("Players must be between 3 and 10!");
+  if (!totalPlayers || totalPlayers < 3 || totalPlayers > 10) {
+    return alert("Players must be between 3 and 10!");
+  }
 
   // Assign roles
   roles = Array(totalPlayers).fill("Santa");
