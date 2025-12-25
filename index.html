@@ -167,6 +167,9 @@ function startGame() {
   const satanIndex = Math.floor(Math.random() * totalPlayers);
   roles[satanIndex] = "Satan";
 
+  // Pick one prompt for the round
+  currentPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+
   // Show hidden screen, hide setup
   document.getElementById('setupScreen').style.display = 'none';
   document.getElementById('hiddenScreen').style.display = 'flex';
@@ -184,7 +187,6 @@ function resetHidden() {
 
 // Reveal role
 function revealRole() {
-  currentPrompt = prompts[Math.floor(Math.random() * prompts.length)];
   const roleDisplay = document.getElementById('roleDisplay');
   roleDisplay.style.display = 'block';
   document.getElementById('starCover').style.display = 'none';
